@@ -1,0 +1,19 @@
+{
+  "name": "event_caller_bot",
+  "version": "1.0.0",
+  "description": "Bot for more efficient meetings organization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoginaDaria/event_caller_bot.git"
+  },
+  "author": "NoginaDaria",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NoginaDaria/event_caller_bot/issues"
+  },
+  "homepage": "https://github.com/NoginaDaria/event_caller_bot#readme"
+}
