@@ -4,7 +4,10 @@
   "description": "Bot for more efficient meetings organization",
   "main": "main.py",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python main.py"
+  },
+  engines = {
+    node: "3.7"
   },
   "repository": {
     "type": "git",
