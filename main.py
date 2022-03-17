@@ -7,7 +7,6 @@ with open('token.txt', 'r') as t:
 if len(TOKEN) == 0:
     raise 'Please input a token'
     
-
 updater = telegram.ext.Updater(TOKEN, use_context=True)
 disp = updater.dispatcher
 
