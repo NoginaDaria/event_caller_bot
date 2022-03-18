@@ -8,6 +8,8 @@ from math import ceil
 import string
 import random
 import os
+import sys
+import logging
 
 places = set()
 final_place = None

@@ -1,31 +1,50 @@
 from config import *
 from place_func import *
-
-with open('token.txt', 'r') as t:
-    TOKEN = t.readline().strip()
     
-if len(TOKEN) == 0:
-    raise 'Please input a token'
-    
-updater = telegram.ext.Updater(TOKEN, use_context=True)
-disp = updater.dispatcher
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger()
 
-#PLACE HANDLERS
-disp.add_handler(telegram.ext.CommandHandler("start", start))
-disp.add_handler(telegram.ext.CommandHandler("help", help_))
-disp.add_handler(telegram.ext.CommandHandler("contact", contact))
-disp.add_handler(telegram.ext.CommandHandler("place", addplace))
-disp.add_handler(telegram.ext.CommandHandler("delplace", delplace))
-disp.add_handler(telegram.ext.CommandHandler("endplaces", chooseplaces))
-disp.add_handler(telegram.ext.PollAnswerHandler(receive_place_poll_answer))
-disp.add_handler(telegram.ext.CommandHandler("endpoll", endpoll))
-disp.add_handler(telegram.ext.CommandHandler("changefinalplace", changefinalplace))
+mode = os.getenv("MODE")
+TOKEN = os.getenv("TOKEN")
 
-#TIME HANDLERS
-disp.add_handler(telegram.ext.CommandHandler("dates", dates))
+if mode == "dev":
+    def run(updater):
+        updater.start_polling()
+elif mode == "prod":
+    def run(updater):
+        PORT = int(os.environ.get("PORT", "8443"))
+        HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME")
+        updater.start_webhook(listen="0.0.0.0",
+                              port=PORT,
+                              url_path=TOKEN)
+        updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(HEROKU_APP_NAME, TOKEN))
+else:
+    logger.error("No MODE specified!")
+    sys.exit(1)
 
-#FINAL HANDLER
-disp.add_handler(telegram.ext.CommandHandler("end", end))
+if __name__ == '__main__':
+    logger.info("Starting bot")
+    updater = telegram.ext.Updater(TOKEN, use_context=True)
+    disp = updater.dispatcher
 
-updater.start_polling()
-updater.idle()
+    #PLACE HANDLERS
+    disp.add_handler(telegram.ext.CommandHandler("start", start))
+    disp.add_handler(telegram.ext.CommandHandler("help", help_))
+    disp.add_handler(telegram.ext.CommandHandler("contact", contact))
+    disp.add_handler(telegram.ext.CommandHandler("place", addplace))
+    disp.add_handler(telegram.ext.CommandHandler("delplace", delplace))
+    disp.add_handler(telegram.ext.CommandHandler("endplaces", chooseplaces))
+    disp.add_handler(telegram.ext.PollAnswerHandler(receive_place_poll_answer))
+    disp.add_handler(telegram.ext.CommandHandler("endpoll", endpoll))
+    disp.add_handler(telegram.ext.CommandHandler("changefinalplace", changefinalplace))
+
+    #TIME HANDLERS
+    disp.add_handler(telegram.ext.CommandHandler("dates", dates))
+
+    #FINAL HANDLER
+    disp.add_handler(telegram.ext.CommandHandler("end", end))
+
+    #updater.start_polling()
+    #updater.idle()
+    run(updater)
